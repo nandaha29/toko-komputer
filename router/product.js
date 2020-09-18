@@ -7,6 +7,9 @@ const multer = require("multer")
 const path = require("path")
 const fs = require("fs")
 
+const auth = require("../auth")
+app.use(auth)
+
 // config storage image
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {

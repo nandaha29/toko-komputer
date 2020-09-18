@@ -1,9 +1,13 @@
 const express = require("express")
+const { sequelize } = require("../models/index")
 const models = require("../models/index")
 const transaksi = models.transaksi
 const detail_transaksi = models.detail_transaksi
 const app = express()
 app.use(express.urlencoded({ extended: true}))
+
+const auth = require("../auth")
+app.use(auth)
 
 
 
