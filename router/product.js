@@ -10,6 +10,7 @@ const fs = require("fs")
 const auth = require("../auth")
 app.use(auth)
 
+
 // config storage image
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -25,9 +26,7 @@ let upload = multer({storage: storage})
 app.get("/", (req, res) =>{
     product.findAll()
     .then(product => {
-        res.json({
-            data: product
-        })
+        res.json(product)
     })
     .catch(error => {
         res.json({
@@ -39,9 +38,7 @@ app.get("/", (req, res) =>{
 app.get("/:product_id", (req, res) =>{
     product.findOne({ where: {product_id: req.params.product_id}})
     .then(product => {
-        res.json({
-            data: product
-        })
+        res.json(product)
     })
     .catch(error => {
         res.json({

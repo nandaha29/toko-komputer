@@ -21,11 +21,14 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     phone: DataTypes.STRING,
     address: DataTypes.STRING,
-    image: DataTypes.STRING
+    image: DataTypes.STRING,
+    username: DataTypes.STRING,
+    password: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'customer',
-    tableName: "customer",
+    tableName: "customer"
+    
   });
   customer.associate = (models) => {
     customer.belongsToMany(models.transaksi,{through:"CustomerTransaction", foreignKey: 'customer_id', as: 'transaksi'})

@@ -1,5 +1,6 @@
 const express = require("express")
 const app = express()
+app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
 const models = require("../models/index")
@@ -13,12 +14,10 @@ const SECRET_KEY = "BelajarNodeJSItuMenyengankan"
 
 app.get("/", auth, async(req, res) => {
     let result = await admin.findAll()
-    res.json({
-        data: result
-    })
+    res.json(result)
 })
 
-app.post("/", async(req, res) => {
+app.post("/", auth, async(req, res) => {
     let data = {
         name: req.body.name,
         username: req.body.username,
@@ -38,12 +37,15 @@ app.post("/", async(req, res) => {
     })
 })
 
-app.put("/", async(req, res) => {
+app.put("/", auth, async(req, res) => {
     let param = { admin_id: req.body.admin_id}
     let data = {
         name: req.body.name,
         username: req.body.username,
-        password: md5(req.body.password)
+    }
+
+    if (req.body.password) {
+        data.password = md5(req.body.password)
     }
 
     admin.update(data, {where: param})
@@ -59,7 +61,7 @@ app.put("/", async(req, res) => {
     })
 })
 
-app.delete("/:admin_id", async(req, res) => {
+app.delete("/:admin_id", auth, async(req, res) => {
     let param = {admin_id: req.params.admin_id}
     admin.destroy({where: param})
     .then(result => {
@@ -81,13 +83,21 @@ app.post("/auth", async (req,res) => {
     }
 
     let result = await admin.findOne({where: params})
-    let payload = JSON.stringify(result)
-    // generate token
-    let token = jwt.sign(payload, SECRET_KEY)
-    res.json({
-        data: result,
-        token: token
-    })
+    if(result){
+        let payload = JSON.stringify(result)
+        // generate token
+        let token = jwt.sign(payload, SECRET_KEY)
+        res.json({
+            logged: true,
+            data: result,
+            token: token
+        })
+    }else{
+        res.json({
+            logged: false,
+            message: "Invalid username or password"
+        })
+    }
 })
 
 module.exports = app

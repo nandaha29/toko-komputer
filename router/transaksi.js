@@ -5,6 +5,7 @@ const transaksi = models.transaksi
 const detail_transaksi = models.detail_transaksi
 const app = express()
 app.use(express.urlencoded({ extended: true}))
+app.use(express.json())
 
 const auth = require("../auth")
 app.use(auth)
@@ -22,13 +23,11 @@ app.get("/", async (req, res) =>{
             }
         ]
     })
-    res.json({
-        data: result
-    })
+    res.json(result)
 })
 
-app.get("/:transaksi_id", async (req, res) =>{
-    let param = { transaksi_id: req.params.transaksi_id}
+app.get("/:customer_id", async (req, res) =>{
+    let param = { customer_id: req.params.customer_id}
     let result = await transaksi.findAll({
         where: param,
         include: [
@@ -40,15 +39,14 @@ app.get("/:transaksi_id", async (req, res) =>{
             }
         ]
     })
-    res.json({
-        data: result
-    })
+    res.json(result)
 })
 
 app.post("/", async (req, res) =>{
+    let current = new Date().toISOString().split('T')[0]
     let data = {
         customer_id: req.body.customer_id,
-        waktu: req.body.waktu,
+        waktu: current,
     }
     transaksi.create(data)
     .then(result => {
@@ -57,6 +55,7 @@ app.post("/", async (req, res) =>{
         detail.forEach(element => {
             element.transaksi_id = lastID
         });
+        console.log(detail);
         detail_transaksi.bulkCreate(detail)
         .then(result => {
             res.json({

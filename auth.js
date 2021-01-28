@@ -8,11 +8,13 @@ auth = (req, res, next) => {
         algorithm: "HS256"
     }
     if(token == null){
-        res.json({ message: "Unauthorized"})
+        res.status(401).json({ message: "Unauthorized"})
     }else{
         jwt.verify(token, SECRET_KEY, jwtHeader, (error,user) => {
             if (error) {
-                res.json({
+                res
+                .status(401)
+                .json({
                     message: "Invalid token"
                 })
             } else {

@@ -2,13 +2,20 @@ const express = require("express")
 const models = require("../models/index")
 const customer = models.customer
 const app = express()
+app.use(express.json())
 
 const multer = require("multer")
 const path = require("path")
 const fs = require("fs")
+const md5 = require("md5")
 
 const auth = require("../auth")
-app.use(auth)
+const jwt = require("jsonwebtoken")
+const SECRET_KEY = "BelajarNodeJSItuMenyengankan"
+// app.use(auth)
+
+
+
 
 // config storage image
 const storage = multer.diskStorage({
@@ -22,26 +29,23 @@ const storage = multer.diskStorage({
 let upload = multer({storage: storage})
 
 
-app.get("/", (req, res) =>{
+app.get("/", auth, (req, res) =>{
     customer.findAll()
-    .then(customers => {
-        res.json({
-            data: customers
-        })
-    })
-    .catch(error => {
-        res.json({
-            message: error.message
-        })
-    })
+            .then(customers => {
+                res.json(customers)
+            })
+            .catch(error => {
+                res.json({
+                    message: error.message
+                })
+            })
+    
 })
 
-app.get("/:customer_id", (req, res) =>{
+app.get("/:customer_id", auth, (req, res) =>{
     customer.findOne({ where: {customer_id: req.params.customer_id}})
     .then(customer => {
-        res.json({
-            data: customer
-        })
+        res.json(customer)
     })
     .catch(error => {
         res.json({
@@ -60,10 +64,13 @@ app.post("/", upload.single("image"), (req, res) =>{
             name: req.body.name,
             phone: req.body.phone,
             address: req.body.address,
-            image: req.file.filename
+            image: req.file.filename,
+            username: req.body.username,
+            password: md5(req.body.password)
         }
         customer.create(data)
         .then(result => {
+            
             res.json({
                 message: "data has been inserted",
                 data: result
@@ -85,6 +92,7 @@ app.put("/", upload.single("image"), (req, res) =>{
         name: req.body.name,
         phone: req.body.phone,
         address: req.body.address,
+        username: req.body.username
     }
     if (req.file) {
         // get data by id
@@ -105,8 +113,13 @@ app.put("/", upload.single("image"), (req, res) =>{
         data.image = req.file.filename
     }
 
+    if(req.body.password){
+        data.password = md5(req.body.password)
+    }
+
     customer.update(data, {where: param})
         .then(result => {
+            
             res.json({
                 message: "data has been updated",
             })
@@ -118,7 +131,7 @@ app.put("/", upload.single("image"), (req, res) =>{
         })
 })
 
-app.delete("/:customer_id", async (req, res) =>{
+app.delete("/:customer_id", auth, async (req, res) =>{
     try {
         let param = { customer_id: req.params.customer_id}
         let result = await customer.findOne({where: param})
@@ -131,6 +144,7 @@ app.delete("/:customer_id", async (req, res) =>{
         // delete data
         customer.destroy({where: param})
         .then(result => {
+            
             res.json({
                 message: "data has been deleted",
             })
@@ -144,6 +158,30 @@ app.delete("/:customer_id", async (req, res) =>{
     } catch (error) {
         res.json({
             message: error.message
+        })
+    }
+})
+
+app.post("/auth", async (req,res) => {
+    let params = {
+        username: req.body.username,
+        password: md5(req.body.password)
+    }
+
+    let result = await customer.findOne({where: params})
+    if(result){
+        let payload = JSON.stringify(result)
+        // generate token
+        let token = jwt.sign(payload, SECRET_KEY)
+        res.json({
+            logged: true,
+            data: result,
+            token: token
+        })
+    }else{
+        res.json({
+            logged: false,
+            message: "Invalid username or password"
         })
     }
 })
