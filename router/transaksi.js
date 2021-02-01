@@ -51,7 +51,7 @@ app.post("/", async (req, res) =>{
     transaksi.create(data)
     .then(result => {
         let lastID = result.transaksi_id
-        detail = JSON.parse(req.body.detail_transaksi)
+        detail = req.body.detail_transaksi
         detail.forEach(element => {
             element.transaksi_id = lastID
         });

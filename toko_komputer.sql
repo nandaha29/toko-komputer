@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 28, 2021 at 06:52 AM
+-- Generation Time: Feb 01, 2021 at 04:01 AM
 -- Server version: 10.1.36-MariaDB
 -- PHP Version: 7.0.32
 
@@ -70,7 +70,8 @@ CREATE TABLE `customer` (
 
 INSERT INTO `customer` (`customer_id`, `name`, `phone`, `address`, `image`, `username`, `password`, `createdAt`, `updatedAt`) VALUES
 (1, 'Zakaria', '+6281 789 762 655', 'Madrid', 'img-1611794239366.jpg', 'zakaria29', '202cb962ac59075b964b07152d234b70', '0000-00-00 00:00:00', '2021-01-28 00:37:21'),
-(2, 'Jack Ma', '+6282 766 212 344', 'Manchester', 'img-1611794283601.jpg', 'jack', '202cb962ac59075b964b07152d234b70', '2020-09-08 09:36:35', '2021-01-28 00:38:03');
+(2, 'Jack Ma', '+6282 766 212 344', 'Manchester', 'img-1611794283601.jpg', 'jack', '202cb962ac59075b964b07152d234b70', '2020-09-08 09:36:35', '2021-01-28 00:38:03'),
+(3, 'John Cena', '+62 8223 599', 'Liverpool', 'img-1611885668240.jpg', 'john', '202cb962ac59075b964b07152d234b70', '2021-01-29 02:01:10', '2021-01-29 02:01:10');
 
 -- --------------------------------------------------------
 
@@ -101,6 +102,14 @@ INSERT INTO `detail_transaksi` (`transaksi_id`, `product_id`, `qty`, `price`, `c
 (12, 2, 5, 20000, '2020-09-08 11:03:11', '2021-01-27 02:11:48'),
 (12, 3, 8, 20000, '2020-09-08 11:17:59', '2021-01-27 02:12:59');
 
+--
+-- Triggers `detail_transaksi`
+--
+DELIMITER $$
+CREATE TRIGGER `update_stok` AFTER INSERT ON `detail_transaksi` FOR EACH ROW UPDATE product SET stock = stock - NEW.qty WHERE product_id = NEW.product_id
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -123,7 +132,8 @@ CREATE TABLE `product` (
 
 INSERT INTO `product` (`product_id`, `name`, `price`, `stock`, `image`, `createdAt`, `updatedAt`) VALUES
 (2, 'Gamepad', 20000, 102, 'img-1611713506314.jpg', '2020-09-08 11:03:11', '2021-01-27 02:11:48'),
-(3, 'RAM 8GB', 20000, 100, 'img-1611713579868.jpg', '2020-09-08 11:17:59', '2021-01-27 02:12:59');
+(3, 'RAM 8GB', 20000, 100, 'img-1611713579868.jpg', '2020-09-08 11:17:59', '2021-01-27 02:12:59'),
+(4, 'Mouse', 150000, 50, 'img-1611884924174.jpg', '2021-01-29 01:44:06', '2021-01-29 01:48:46');
 
 -- --------------------------------------------------------
 
@@ -221,25 +231,25 @@ ALTER TABLE `transaksi`
 -- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `transaksi`
 --
 ALTER TABLE `transaksi`
-  MODIFY `transaksi_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `transaksi_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- Constraints for dumped tables
