@@ -1,0 +1,19 @@
+STEP BY STEP FE
+YOOO BISA YOKKK:)
+DUNIA MASIH BAIK BAIK SAJA DENGAN MELIHAT SENYUMAN MAMA:)
+
+>>> SATU
+- buat react-app
+- instal library -> $ npm install axios bootstrap dotenv jquery popper.js react-router-dom --save
+- setPort -> "start": "SET PORT=4000 && react-scripts start",
+- import Bootstrap di index.js
+- buat file components di folder src
+
+>> DUA
+/ buat halaman login
+- tambah 'config.js' tuk inisiasi url API BE
+- import axios dan 'config.js' di file login.js
+
+>> TIGA
+- import axios dan url di 'login.js'
+- edit 'home.js'
